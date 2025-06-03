@@ -58,14 +58,14 @@ const UPDATE_ROOM = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      inv_code: yup.string().label("inv_code").required("Inventory code is required"),
-      channel_codes: yup.array().label("channel_codes").default([]),
-      start_date: yup.string().label("start_date").required("Start date is required"),
-      end_date: yup.string().label("end_date").required("End date is required"),
-      availability: yup.number().label("availability").default(null),
-      price: yup.number().label("price").default(null),
-      min_stay: yup.number().label("min_stay").default(null),
-      stop_sale: yup.number().label("stop_sale").default(null),
+      inv_code: yup.string().required(),
+      channel_codes: yup.array(),
+      start_date: yup.string().required(),
+      end_date: yup.string().required(),
+      availability: yup.number(),
+      price: yup.number(),
+      min_stay: yup.number(),
+      stop_sale: yup.number(),
     })
   ),
   rerun: true,
@@ -96,6 +96,7 @@ const UPDATE_ROOM = {
 
       return response.data;
     } catch (error) {
+      console.log("Error updating room:", error);
       return "Error updating room: " + error;
     }
   },
@@ -112,7 +113,7 @@ const GET_TRANSACTION_DETAILS = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      transaction_id: yup.string().label("transaction_id").required("Transaction ID is required"),
+      transaction_id: yup.string().required(),
     })
   ),
   rerun: true,
@@ -129,6 +130,7 @@ const GET_TRANSACTION_DETAILS = {
       });
       return response.data;
     } catch (error) {
+      console.log("Error fetching transaction details:", error);
       return "Error fetching transaction details: " + error;
     }
   },
@@ -145,14 +147,14 @@ const RETRIEVE_RESERVATIONS = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      from_date: yup.string().label("from_date").default(null),
-      from_last_update_date: yup.string().label("from_last_update_date").default(null),
-      per_page: yup.number().label("per_page").default(10),
-      page: yup.number().label("page").default(1),
-      reservation_number: yup.string().label("reservation_number").default(null),
-      undelivered: yup.boolean().label("undelivered").default(true),
-      modified: yup.boolean().label("modified").default(false),
-      booked: yup.boolean().label("booked").default(false),
+      from_date: yup.string(),
+      from_last_update_date: yup.string(),
+      per_page: yup.number(),
+      page: yup.number(),
+      reservation_number: yup.string(),
+      undelivered: yup.boolean(),
+      modified: yup.boolean(),
+      booked: yup.boolean(),
     })
   ),
   rerun: true,
@@ -182,6 +184,7 @@ const RETRIEVE_RESERVATIONS = {
 
       return response.data;
     } catch (error) {
+      console.log("Error retrieving reservations:", error);
       return "Error retrieving reservations: " + error;
     }
   },
@@ -198,9 +201,9 @@ const RESERVATION_STATE_UPDATE = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      hr_number: yup.string().label("hr_number").required("Reservation code is required"),
-      event: yup.string().label("event").required("Event is required"),
-      cancel_reason: yup.string().label("cancel_reason").default(null),
+      hr_number: yup.string().required(),
+      event: yup.string().required(),
+      cancel_reason: yup.string(),
     })
   ),
   rerun: true,
@@ -219,6 +222,7 @@ const RESERVATION_STATE_UPDATE = {
 
       return response.data;
     } catch (error) {
+      console.log("Error updating reservation state:", error);
       return "Error updating reservation state: " + error;
     }
   },
@@ -235,8 +239,8 @@ const CONFIRM_RESERVATION_DELIVERY = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      message_uid: yup.string().label("message_uid").required("Message UID is required"),
-      pms_number: yup.string().label("pms_number").default(null),
+      message_uid: yup.string().required(),
+      pms_number: yup.string(),
     })
   ),
   rerun: true,
@@ -255,6 +259,7 @@ const CONFIRM_RESERVATION_DELIVERY = {
 
       return response.data;
     } catch (error) {
+      console.log("Error confirming reservation delivery:", error);
       return "Error confirming reservation delivery: " + error;
     }
   },
@@ -290,6 +295,7 @@ const GET_CHANNEL_LIST = {
       });
       return response.data;
     } catch (error) {
+      console.log("Error fetching channel list:", error);
       return "Error fetching channel list: " + error;
     }
   },
@@ -323,6 +329,7 @@ const GET_CONNECTED_CHANNEL_LIST = {
       });
       return response.data;
     } catch (error) {
+      console.log("Error fetching connected channel list:", error);
       return "Error fetching connected channel list: " + error;
     }
   },

@@ -7,8 +7,7 @@ const yupToJsonSchema = require("./yupToJsonSchema");
 
 const getRoomListSchema = yupToJsonSchema(
   yup.object({
-    token: yup.string().label("token").required("Token is required"),
-    hr_id: yup.string().label("hr_id").required("HR ID is required"),
+    
   })
 );
 
@@ -23,14 +22,18 @@ const GET_ROOM_LIST = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      token: yup.string().label("token").default(process.env.TOKEN).required("Token is required"),
-      hr_id: yup.string().label("hr_id").default(process.env.HRID).required("HR ID is required"),
+     
     })
   ),
   rerun: true,
   rerunWithDifferentParameters: true,
-  runCmd: async ({ token = process.env.TOKEN, hr_id = process.env.HRID }) => {
+  runCmd: async () => {
     try {
+      const token = process.env.TOKEN;
+      const hr_id = process.env.HRID;
+      if (!token || !hr_id) {
+        return "Token and HR ID are required";
+      }
       const url = `https://app.hotelrunner.com/api/v2/apps/rooms?token=${token}&hr_id=${hr_id}`;
       const response = await axios.get(url, {
         headers: {
@@ -55,8 +58,6 @@ const UPDATE_ROOM = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      token: yup.string().label("token").default(process.env.TOKEN).required("Token is required"),
-      hr_id: yup.string().label("hr_id").default(process.env.HRID).required("HR ID is required"),
       inv_code: yup.string().label("inv_code").required("Inventory code is required"),
       channel_codes: yup.array().label("channel_codes").default([]),
       start_date: yup.string().label("start_date").required("Start date is required"),
@@ -69,8 +70,10 @@ const UPDATE_ROOM = {
   ),
   rerun: true,
   rerunWithDifferentParameters: true,
-  runCmd: async ({ token = process.env.TOKEN, hr_id = process.env.HRID, inv_code, channel_codes, start_date, end_date, availability, price, min_stay, stop_sale }) => {
+  runCmd: async ({ inv_code, channel_codes, start_date, end_date, availability, price, min_stay, stop_sale }) => {
     try {
+      const token = process.env.TOKEN;
+      const hr_id = process.env.HRID;
       const url = `https://app.hotelrunner.com/api/v2/apps/rooms/`;
       const data = {
         hr_id,
@@ -109,8 +112,6 @@ const GET_TRANSACTION_DETAILS = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      token: yup.string().label("token").default(process.env.TOKEN).required("Token is required"),
-      hr_id: yup.string().label("hr_id").default(process.env.HRID).required("HR ID is required"),
       transaction_id: yup.string().label("transaction_id").required("Transaction ID is required"),
     })
   ),
@@ -118,7 +119,9 @@ const GET_TRANSACTION_DETAILS = {
   rerunWithDifferentParameters: true,
   runCmd: async ({ transaction_id }) => {
     try {
-      const url = `https://app.hotelrunner.com/api/v2/apps/infos/transaction_details?transaction_id=${transaction_id}&token=${process.env.TOKEN}&hr_id=${process.env.HRID}`;
+      const token = process.env.TOKEN;
+      const hr_id = process.env.HRID;
+      const url = `https://app.hotelrunner.com/api/v2/apps/infos/transaction_details?transaction_id=${transaction_id}&token=${token}&hr_id=${hr_id}`;
       const response = await axios.get(url, {
         headers: {
           "cache-control": "no-cache",
@@ -142,8 +145,6 @@ const RETRIEVE_RESERVATIONS = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      token: yup.string().label("token").default(process.env.TOKEN).required("Token is required"),
-      hr_id: yup.string().label("hr_id").default(process.env.HRID).required("HR ID is required"),
       from_date: yup.string().label("from_date").default(null),
       from_last_update_date: yup.string().label("from_last_update_date").default(null),
       per_page: yup.number().label("per_page").default(10),
@@ -156,8 +157,10 @@ const RETRIEVE_RESERVATIONS = {
   ),
   rerun: true,
   rerunWithDifferentParameters: true,
-  runCmd: async ({ token = process.env.TOKEN, hr_id = process.env.HRID, from_date, from_last_update_date, per_page, page, reservation_number, undelivered, modified, booked }) => {
+  runCmd: async ({ from_date, from_last_update_date, per_page, page, reservation_number, undelivered, modified, booked }) => {
     try {
+      const token = process.env.TOKEN;
+      const hr_id = process.env.HRID;
       const url = `https://app.hotelrunner.com/api/v2/apps/reservations?token=${token}&hr_id=${hr_id}`;
       const params = {
         from_date,
@@ -195,8 +198,6 @@ const RESERVATION_STATE_UPDATE = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      token: yup.string().label("token").default(process.env.TOKEN).required("Token is required"),
-      hr_id: yup.string().label("hr_id").default(process.env.HRID).required("HR ID is required"),
       hr_number: yup.string().label("hr_number").required("Reservation code is required"),
       event: yup.string().label("event").required("Event is required"),
       cancel_reason: yup.string().label("cancel_reason").default(null),
@@ -204,8 +205,10 @@ const RESERVATION_STATE_UPDATE = {
   ),
   rerun: true,
   rerunWithDifferentParameters: true,
-  runCmd: async ({ token = process.env.TOKEN, hr_id = process.env.HRID, hr_number, event, cancel_reason }) => {
+  runCmd: async ({ hr_number, event, cancel_reason }) => {
     try {
+      const token = process.env.TOKEN;
+      const hr_id = process.env.HRID;
       const url = `https://app.hotelrunner.com/api/v2/apps/reservations/fire?token=${token}&hr_id=${hr_id}&hr_number=${hr_number}&event=${event}&cancel_reason=${cancel_reason}`;
 
       const response = await axios.put(url, null, {
@@ -232,16 +235,16 @@ const CONFIRM_RESERVATION_DELIVERY = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      token: yup.string().label("token").default(process.env.TOKEN).required("Token is required"),
-      hr_id: yup.string().label("hr_id").default(process.env.HRID).required("HR ID is required"),
       message_uid: yup.string().label("message_uid").required("Message UID is required"),
       pms_number: yup.string().label("pms_number").default(null),
     })
   ),
   rerun: true,
   rerunWithDifferentParameters: true,
-  runCmd: async ({ token = process.env.TOKEN, hr_id = process.env.HRID, message_uid, pms_number }) => {
+  runCmd: async ({ message_uid, pms_number }) => {
     try {
+      const token = process.env.TOKEN;
+      const hr_id = process.env.HRID;
       const url = `https://app.hotelrunner.com/api/v2/apps/reservations/~?token=${token}&hr_id=${hr_id}&message_uid=${message_uid}&pms_number=${pms_number}`;
 
       const response = await axios.put(url, null, {
@@ -268,14 +271,17 @@ const GET_CHANNEL_LIST = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      token: yup.string().label("token").default(process.env.TOKEN).required("Token is required"),
-      hr_id: yup.string().label("hr_id").default(process.env.HRID).required("HR ID is required"),
+      // token: yup.string().label("token").default(process.env.TOKEN).required("Token is required"),
+      // hr_id: yup.string().label("hr_id").default(process.env.HRID).required("HR ID is required"),
     })
   ),
   rerun: true,
   rerunWithDifferentParameters: true,
-  runCmd: async ({ token = process.env.TOKEN, hr_id = process.env.HRID }) => {
+  runCmd: async () => {
     try {
+      
+      const token = process.env.TOKEN
+      const hr_id = process.env.HRID;
       const url = `https://app.hotelrunner.com/api/v2/apps/infos/channels?token=${token}&hr_id=${hr_id}`;
       const response = await axios.get(url, {
         headers: {
@@ -300,14 +306,15 @@ const GET_CONNECTED_CHANNEL_LIST = {
   prerequisites: [],
   parameters: yupToJsonSchema(
     yup.object({
-      token: yup.string().label("token").default(process.env.TOKEN).required("Token is required"),
-      hr_id: yup.string().label("hr_id").default(process.env.HRID).required("HR ID is required"),
+      
     })
   ),
   rerun: true,
   rerunWithDifferentParameters: true,
-  runCmd: async ({ token = process.env.TOKEN, hr_id = process.env.HRID }) => {
+  runCmd: async () => {
     try {
+      const token = process.env.TOKEN;
+      const hr_id = process.env.HRID; 
       const url = `https://app.hotelrunner.com/api/v2/apps/infos/connected_channels?token=${token}&hr_id=${hr_id}`;
       const response = await axios.get(url, {
         headers: {
